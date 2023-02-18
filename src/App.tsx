@@ -7,7 +7,7 @@ import { Toaster, toast } from 'react-hot-toast';
 import axios from 'axios'
 import useSWRMutation from 'swr/mutation'
 
-const baseURL = process.env.NODE_ENV === "production" ? "https://34.134.139.101:8080" : "http://localhost:8080"
+const baseURL = process.env.NODE_ENV === "production" ? "https://app-hitzglzhma-uc.a.run.app" : "http://localhost:8080"
 
 const processTr = (url: any, { arg }: any) => {
   return axios({
