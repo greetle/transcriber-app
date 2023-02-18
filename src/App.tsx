@@ -30,7 +30,6 @@ function App() {
     recordingTime
   } = useAudioRecorder();
   const [error, setError] = useState(false)
-
   const { trigger, isMutating } = useSWRMutation(['/api/transcribe', recordingBlob], processTr, {
     onError: () => {
       toast.error("Error with server, try again later")
@@ -45,6 +44,13 @@ function App() {
   const handleStart = () => {
     startRecording()
   }
+
+  useEffect(() => {
+    if (recordingTime > 10) {
+      toast.error("Recording stopped, maximum duration limit (10sec) reached.")
+      stopRecording()
+    }
+  }, [recordingTime])
 
   const handleStop = () => {
     if (recordingTime < 3) {
@@ -69,19 +75,28 @@ function App() {
   }
 
   return (
-    <div className="App">
-      <Center>
-        <Container size="md" mt={"10%"}>
-          <Title
-            variant="gradient"
-            gradient={{ from: 'indigo', to: 'cyan', deg: 45 }}
-            sx={{ fontFamily: 'Greycliff CF, sans-serif' }}
-            ta="center"
-            fw={700}
-          >
-            Georgian Speech-To-Text Transcriber
-          </Title>
-          <Paper shadow="md" p={25}>
+    <div>
+      <Container size="md" mt={"10%"}>
+        <Title
+          variant="gradient"
+          gradient={{ from: 'indigo', to: 'cyan', deg: 45 }}
+          sx={{ fontFamily: 'Greycliff CF, sans-serif' }}
+          ta="center"
+          fw={700}
+        >
+          Georgian Speech-To-Text Transcriber
+        </Title>
+        <Text
+          my={10}
+          ta="center"
+          c="dimmed"
+          sx={{ fontFamily: 'Greycliff CF, sans-serif' }}
+          fw={700}
+        >
+          Transcribes Georgian 🇬🇪 Speech only.  Recording time limit is 10 second
+        </Text>
+        <Center>
+          <Paper shadow="md" p={25} w={400}>
             <div className="flex mt-10">
               <Button
                 fullWidth
@@ -89,7 +104,7 @@ function App() {
                 mt={10}
                 leftIcon={isRecording ? <PlayerStop /> : <Microphone />}
                 variant="gradient" gradient={{ from: '#ed6ea0', to: isRecording ? '#ed6ea0' : '#ec8c69', deg: 35 }}>
-                {isRecording ? "Recording..." : "Record"}
+                {isRecording ? `Recording... (remaining: ${10 - recordingTime}s)` : "Record"}
               </Button>
               <Button
                 loading={isMutating}
@@ -120,13 +135,13 @@ function App() {
               ))}
             </List>
           </Paper>
-        </Container>
-      </Center>
+        </Center>
+      </Container>
       <Toaster
         position="top-center"
         reverseOrder={false}
       />
-    </div>
+    </div >
   );
 }
 
