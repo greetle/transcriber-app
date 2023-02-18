@@ -32,6 +32,9 @@ function App() {
   const [error, setError] = useState(false)
 
   const { trigger, isMutating } = useSWRMutation(['/api/transcribe', recordingBlob], processTr, {
+    onError: () => {
+      toast.error("Error with server, try again later")
+    },
     onSuccess: ({ data }) => {
       setTexts(prev => [...prev, {
         text: data.text,
